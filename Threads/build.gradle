@@ -1,0 +1,20 @@
+apply plugin: 'java'
+
+description = "Multi-Threaded Server"
+
+ def host = 'localhost'
+ def port = 9099
+ def file = 'data.json'
+
+task Task1(type: JavaExec){
+    group 'Threaded Server'
+    description 'Runs Performer without threads'
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'ThreadedServer'
+
+    if(project.hasProperty("port")){
+        args(project.getProperty('port'));
+    }
+}
