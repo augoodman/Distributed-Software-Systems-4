@@ -3,8 +3,8 @@ import java.io.*;
 
 class Performer {
 
-    StringList  state;
-    Socket      sock;
+    static StringList state;
+    Socket sock;
 
     public Performer(Socket sock, StringList strings) {
         this.sock = sock;
@@ -32,15 +32,16 @@ class Performer {
                 if (str == null || str.equals("."))
                     done = true;
                 else if (str.equals("1")){
-                    out.println("Enter a string to add.");
+                    out.println("\nEnter a string to add.");
                     str = in.readLine();
                     state.add(str);
                     out.println("Server state is now: " + state.toString());
                 }
                 else if (str.equals("2")){
-                    out.println("Enter an index to remove.");
+                    out.println("\nEnter an index to remove.");
                     str = in.readLine();
-                    if (state.remove(Integer.parseInt(str))) {
+                    if (state.contains(Integer.parseInt(str))) {
+                        state.remove(Integer.parseInt(str));
                         out.println("String removed. Server state is now: " + state.toString());
                     }
                     else {
@@ -49,15 +50,18 @@ class Performer {
                     }
                 }
                 else if (str.equals("3")){
-                    out.println("List Display: " + state.toString());
+                    out.println("\nServer state is: " + state.toString());
                 }
                 else if (str.equals("4")){
-                    out.println("List Count: " + state.size());
+                    String counts = state.count();
+                    out.println("\nList Count: " + counts);
+                    out.println("Server state is: " + state.toString());
                 }
                 else if (str.equals("5")){
-                    out.println("Enter an index to reverse.");
+                    out.println("\nEnter an index to reverse.");
                     str = in.readLine();
-                    if (state.reverse(Integer.parseInt(str))) {
+                    if (state.contains(Integer.parseInt(str))) {
+                        state.reverse(Integer.parseInt(str));
                         out.println("String reversed. Server state is now: " + state.toString());
                     }
                     else {

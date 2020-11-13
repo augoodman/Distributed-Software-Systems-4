@@ -12,9 +12,39 @@ task Task1(type: JavaExec){
 
     classpath = sourceSets.main.runtimeClasspath
 
+    main = 'ThreadPoolServer'
+
+    if(project.hasProperty("port")){
+        args(project.getProperty('port'));
+    }
+    args '-1'
+}
+
+task Task2(type: JavaExec){
+    group 'Threaded Server'
+    description 'Runs Performer with unbounded threads'
+
+    classpath = sourceSets.main.runtimeClasspath
+
     main = 'ThreadedServer'
 
     if(project.hasProperty("port")){
         args(project.getProperty('port'));
+    }
+}
+
+task Task3(type: JavaExec){
+    group 'Threaded Server'
+    description 'Runs Performer with bounded threads'
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'ThreadPoolServer'
+
+    if(project.hasProperty("port")){
+        args(project.getProperty('port'));
+    }
+    if(project.hasProperty("thread")){
+        args(project.getProperty('thread'));
     }
 }

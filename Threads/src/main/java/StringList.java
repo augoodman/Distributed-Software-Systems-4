@@ -5,14 +5,14 @@ class StringList {
 
     List<String> strings = new ArrayList<String>();
 
-    public void add(String str) {
+    public synchronized void add(String str) {
         int pos = strings.indexOf(str);
         if (pos < 0) {
             strings.add(str);
         }
     }
 
-    public boolean remove(int index){
+    public synchronized boolean remove(int index){
         if(index < strings.size() && index >= 0){
             strings.remove(index);
             return true;
@@ -20,24 +20,35 @@ class StringList {
         return false;
     }
 
-    public boolean reverse(int index){
-        if(index < strings.size() && index >= 0){
-            StringBuilder sb = new StringBuilder(strings.get(index));
-            sb.reverse();
-            return true;
+    public synchronized void reverse(int index){
+        StringBuilder reverse = new StringBuilder(strings.get(index));
+        reverse.reverse();
+        strings.set(index, reverse.toString());
+    }
+
+    public synchronized String count(){
+        StringBuilder count = new StringBuilder();
+        count.append("[");
+        int length;
+        for(int i = 0; i < strings.size() - 1; i++){
+            length = strings.get(i).length();
+            count.append(length);
+            count.append(" ");
         }
-        return false;
+        length = strings.get(strings.size() - 1).length();
+        count.append(length).append("]");
+        return count.toString();
     }
 
-    public boolean contains(String str) {
-        return strings.indexOf(str) >= 0;
+    public synchronized boolean contains(int index) {
+        return index >= 0 && index < strings.size();
     }
 
-    public int size() {
+    public synchronized int size() {
         return strings.size();
     }
 
-    public String toString() {
+    public synchronized String toString() {
         return strings.toString();
     }
 }
