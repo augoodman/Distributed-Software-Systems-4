@@ -70,5 +70,23 @@
     "question": "(yes/no) JSON is easier to read than a bytestream?",
     "answer": "yes",
     "type": "SA"
+  },
+  {
+    "id":13,
+    "question": "(yes/no) Is Assignment 4 better than Assignment 3?",
+    "answer": "yes",
+    "type": "SA"
+  },
+  {
+    "id":14,
+    "question": "(yes/no) Is SER 321 a great class?",
+    "answer": "yes",
+    "type": "SA"
+  },
+  {
+    "id":15,
+    "question": "(ja/nein) Sollten Sie Deutschland besuchen?",
+    "answer": "ja",
+    "type": "SA"
   }
 ]
