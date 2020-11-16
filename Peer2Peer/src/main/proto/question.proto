@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package peer2peer;
+
+option java_package = "peer";
+option java_outer_classname = "QuestionProtos";
+
+message Question {
+  optional int32 id = 1;
+  optional string question = 2;
+  optional string answer = 3;
+  optional string type = 4;
+}

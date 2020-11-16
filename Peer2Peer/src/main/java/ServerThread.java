@@ -1,4 +1,4 @@
-import org.json.JSONObject;
+import org.json.*;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -16,7 +16,7 @@ import java.util.Set;
  * When we wand to send a message we send it to all the listening ports
  */
 
-public class ServerThread extends Thread{
+public class ServerThread extends Thread {
     private ServerSocket serverSocket;
     private Set<Socket> listeningSockets = new HashSet<Socket>();
 
@@ -47,19 +47,10 @@ public class ServerThread extends Thread{
                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
                 out.println(message);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
 
-    void sendQuestion(JSONObject jo){
-        for (Socket s : listeningSockets) {
-            try (OutputStreamWriter out = new OutputStreamWriter(
-                    s.getOutputStream(), StandardCharsets.UTF_8)) {
-                out.write(jo.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
+

@@ -18,13 +18,21 @@ import org.json.*;
  */
 
 public class Peer {
-    private String username;
+    private static String username;
     private BufferedReader bufferedReader;
-    private ServerThread serverThread;
+    public static ServerThread serverThread;
     private boolean hostFlag = true;
     private int playerCount = 1;
     private static JSONArray ja;
     private static List<JSONObject> joList = new ArrayList<JSONObject>();
+    public static boolean isHost = true;
+    private static boolean isClient = false;
+    public static String answer = " ";
+    public static String guess = null;
+    private static int points = 0;
+    private static boolean firstGame = true;
+    public static boolean gameOver = false;
+    public static boolean winner = false;
 
     public Peer(BufferedReader bufReader, String username, ServerThread serverThread){
         this.username = username;
@@ -90,7 +98,9 @@ public class Peer {
      */
     public void askForInput() throws Exception {
         try {
-            System.out.println("> You can now start chatting (exit to exit). If you type 'start' your game will start with your peers:");
+            if(firstGame) System.out.println("> You can now start chatting (exit to exit). If you type 'start' your game will start with your peers:");
+            else System.out.println("Back to main loop: chat or type 'start' to start a game");
+            //firstGame = false;
             while(true) {
                 String message = bufferedReader.readLine();
                 if (message.equals("exit")) {
@@ -98,6 +108,11 @@ public class Peer {
                     break;
                 }
                 else if(message.equalsIgnoreCase("start")){
+                    if(!firstGame && winner){
+                        winner = false;
+                        runHost();
+                    }
+                    else if(!firstGame && !winner) runClient();
                     System.out.println("You are almost ready to start....");
                     System.out.println("Type 1 if you are the agreed upon host or 0 if you are a pawn");
                     message = bufferedReader.readLine();
@@ -119,8 +134,9 @@ public class Peer {
         }
     }
 
-    private void runHost() {
+    private void runHost() throws Exception {
         try {
+
             System.out.println("\n\n\n################");
             System.out.println("NEW ROUND");
             System.out.println("################\n\n\n");
@@ -131,18 +147,33 @@ public class Peer {
             System.out.println("You are Host");
             System.out.println("Starting our question round:");
             System.out.println("Type 'yes' if you are ready to send your question:");
-            String message = bufferedReader.readLine();
-            if (message.equalsIgnoreCase("yes")) {
-                sendQuestion();
+            while(guess == null && !gameOver) {
+                String message = bufferedReader.readLine();
+                if (message.equalsIgnoreCase("yes")) {
+                    JSONObject jo = joList.remove((int) (Math.random() * 15));
+                    String question = jo.getString("question");
+                    answer = jo.getString("answer");
+                    System.out.println("[ question ]: " + question);
+                    serverThread.sendMessage("{'username': '" + username + "','question': '" + question + "','answer':'" + answer + "'}");
+                } else if (message.equalsIgnoreCase("exit")) {
+                    System.out.println("bye, see you next time");
+                    System.exit(0);
+                }
             }
-            else receiveQuestion();
+            guess = null;
+            if(gameOver){
+                gameOver = false;
+                firstGame = false;
+                askForInput();
+            }
+            runClient();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void runClient() throws IOException {
-        try {
+    public void runClient() throws Exception {
+        //try {
             System.out.println("\n\n\n################");
             System.out.println("NEW ROUND");
             System.out.println("################\n\n\n");
@@ -150,20 +181,38 @@ public class Peer {
             System.out.println("You are a Pawn");
             System.out.println("Starting our question round:");
             System.out.println("Wait, your host is selecting a question...");
-            String message = bufferedReader.readLine();
-            receiveQuestion();
-        } catch (IOException e) {
-            e.printStackTrace();
+        while(true) {
+            String guess = bufferedReader.readLine();
+            if (!guess.equalsIgnoreCase("exit")) {
+                //String guess = bufferedReader.readLine();
+                serverThread.sendMessage("{'username': '"+ username +"','guess':'" + guess + "'}");
+                if(guess.equalsIgnoreCase(answer)){
+                    System.out.println("Yeah correct");
+                    points++;
+                    if(points == 1){
+                        System.out.println("I WON I WON I WON I WON");
+                        serverThread.sendMessage("{'username': '"+ username +"','message':'I WON I WON I WON I WON'}");
+                        firstGame = false;
+                        winner = true;
+                        askForInput();
+                    }
+                    break;
+                }
+                else System.out.println("Nope");
+            }
+            else {
+                System.out.println("bye, see you next time");
+                System.exit(0);
+            }
         }
-    }
-
-    private void sendQuestion() {
-        JSONObject jo = joList.remove((int)(Math.random() * 15));
-        String question = jo.getString("question");
-        serverThread.sendMessage(question);
-        String answer = jo.getString("answer");
-        System.out.println(question);
-        serverThread.sendQuestion(jo);
+        runHost();
+            //String guess = bufferedReader.readLine();
+            //serverThread.sendMessage("{'username': '"+ username +"','message':'" + guess + "'}");
+        //String message = bufferedReader.readLine();
+            //receiveQuestion();
+       // } catch (IOException e) {
+        //    e.printStackTrace();
+       // }
     }
 
     private void receiveQuestion() {
