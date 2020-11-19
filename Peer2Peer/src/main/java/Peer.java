@@ -134,6 +134,10 @@ public class Peer {
         }
     }
 
+    /**
+     * Logic for implementing host logic
+     *
+     */
     private void runHost() throws Exception {
         try {
 
@@ -172,6 +176,10 @@ public class Peer {
         }
     }
 
+    /**
+     * Logic for implementing client logic
+     *
+     */
     public void runClient() throws Exception {
         //try {
             System.out.println("\n\n\n################");
@@ -189,7 +197,7 @@ public class Peer {
                 if(guess.equalsIgnoreCase(answer)){
                     System.out.println("Yeah correct");
                     points++;
-                    if(points == 1){
+                    if(points == 3){
                         System.out.println("I WON I WON I WON I WON");
                         serverThread.sendMessage("{'username': '"+ username +"','message':'I WON I WON I WON I WON'}");
                         firstGame = false;
@@ -206,16 +214,5 @@ public class Peer {
             }
         }
         runHost();
-            //String guess = bufferedReader.readLine();
-            //serverThread.sendMessage("{'username': '"+ username +"','message':'" + guess + "'}");
-        //String message = bufferedReader.readLine();
-            //receiveQuestion();
-       // } catch (IOException e) {
-        //    e.printStackTrace();
-       // }
-    }
-
-    private void receiveQuestion() {
-
     }
 }
